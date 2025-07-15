@@ -1,23 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TodoItem from './TodoItem';
 
-let nextId = 1;
-
 function App() {
-  const [text, setText] = useState('');
   const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const addTodo = (e) => {
-    e.preventDefault(); // ❗ form 제출 시 새로고침 방지
-    if (text.trim() === '') return;
-    const newTodo = {
-      id: nextId++,
-      text,
-      done: false
-    };
-    setTodos([...todos, newTodo]);
-    setText('');
-  };
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos?_limit=5')
+      .then(res => res.json())
+      .then(data => {
+        setTodos(data.map(item => ({
+          id: item.id,
+          text: item.title,
+          done: item.completed
+        })));
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError('데이터 불러오기 실패');
+        setLoading(false);
+      });
+  }, []);
 
   const toggleTodo = (id) => {
     setTodos(
@@ -31,24 +36,13 @@ function App() {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
+  if (loading) return <p style={{ textAlign: 'center' }}>로딩 중...</p>;
+  if (error) return <p style={{ textAlign: 'center', color: 'red' }}>{error}</p>;
+
   return (
-    <div style={{ textAlign: 'center', marginTop: '100px' }}>
-      <h1>📝 할 일 목록 (form 처리)</h1>
-
-      <form onSubmit={addTodo}>
-        <input
-          type="text"
-          placeholder="할 일을 입력하세요"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          style={{ padding: '8px', fontSize: '16px' }}
-        />
-        <button type="submit" style={{ marginLeft: '10px' }}>
-          추가
-        </button>
-      </form>
-
-      <ul style={{ listStyle: 'none', padding: 0, marginTop: '30px' }}>
+    <div style={{ maxWidth: '400px', margin: '50px auto' }}>
+      <h1>API 할 일 목록</h1>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {todos.map(todo => (
           <TodoItem
             key={todo.id}
@@ -63,4 +57,3 @@ function App() {
 }
 
 export default App;
-
