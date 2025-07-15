@@ -5,19 +5,32 @@ function  TodoItem({key, todo, onToggle, onDelete}) {
         <li
             style={{
                 marginBottom: '10px',
+                padding: '6px 12px',
+                fontSize: '18px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '8px',
+                cursor: 'pointer',
                 textDecoration: todo.done ? 'line-through' : 'none',
                 color: todo.done ? 'gray' : 'black',
-                cursor: 'pointer'
+                ransition: '0.2s'
             }}
             onClick={() => onToggle(todo.id)}
         >
             {todo.text}
             <button
                 onClick={(e) => {
-                    e.stopPropagation(); // 클릭 이벤트 전파 막기
+                    e.stopPropagation();
                     onDelete(todo.id);
                 }}
-                style={{ marginLeft: '10px', color: 'red' }}
+                style={{
+                    marginLeft: '10px',
+                    color: 'white',
+                    backgroundColor: 'red',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '4px 8px',
+                    cursor: 'pointer'
+                }}
             >
                 삭제
             </button>
