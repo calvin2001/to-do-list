@@ -5,6 +5,7 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/todos?_limit=5')
@@ -36,12 +37,38 @@ function App() {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
+  const toggleTheme = () => setDarkMode(!darkMode);
+
   if (loading) return <p style={{ textAlign: 'center' }}>로딩 중...</p>;
   if (error) return <p style={{ textAlign: 'center', color: 'red' }}>{error}</p>;
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto' }}>
+    <div style={{
+      backgroundColor: darkMode ? '#222' : '#fff',
+      color: darkMode ? '#eee' : '#000',
+      minHeight: '100vh',
+      padding: '30px',
+      transition: '0.3s'
+      }}
+    >
       <h1>API 할 일 목록</h1>
+      <button
+        onClick={toggleTheme}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          backgroundColor: darkMode ? '#444' : '#ddd',
+          color: darkMode ? '#eee' : '#000',
+          border: 'none',
+          cursor: 'pointer'
+        }}
+      >   
+        {darkMode ? '☀️ 라이트 모드' : '🌙 다크 모드'}
+      </button>
+
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {todos.map(todo => (
           <TodoItem
@@ -52,6 +79,20 @@ function App() {
           />
         ))}
       </ul>
+      <button
+        onClick={() => setTodos([])}
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          borderRadius: '8px',
+          backgroundColor: '#e74c3c',
+          color: 'white',
+          border: 'none',
+          cursor: 'pointer'
+        }}
+      >
+        🗑️ 전체 삭제
+      </button>
     </div>
   );
 }
